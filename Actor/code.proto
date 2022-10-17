@@ -1,0 +1,82 @@
+syntax = "proto3";   // 指定protobuf版本
+
+package test;   // 此文件的标识符,不添加也可以,以防止协议消息类型之间的名称冲突
+
+//定义单程服务
+service Unary {
+	rpc Register (register_request) returns (register_response) {}
+}
+//stream关键字用来定义流式传输
+service Stream {
+	rpc Inquiry (inquiry_request) returns (stream inquiry_response) {}
+	rpc HeartCheck (heartcheck_request) returns (stream heartcheck_response){}
+}
+//Task service定义任务分配及结果回收过程中用到的请求
+service Task {
+	rpc IdleAsk (idleask_request) returns (idleask_response) {}
+	rpc WorkerNodesInfo (worker_nodes_info_request) returns (worker_nodes_info_response) {}
+	rpc FrameTransmission (stream frame_trans_request) returns (frame_trans_response) {}
+	rpc MaskTransmission (stream mask_trans_request) returns (mask_trans_response) {}
+	rpc ContoursTransmission (stream contours_trans_request) returns (contours_trans_response) {}
+}
+
+// 定义消息结构类型，字段编号，可不从1开始，但不能重复，request为数据结构名，可自由定义
+message register_request {
+	//map对应py里的dict
+	map<string, string> data = 1;
+}
+// 定义消息结构类型，数据后面的编号不能重复，response为数据结构名，可自由定义
+message register_response {
+	string message = 1;
+}
+
+message inquiry_request {
+	string message = 1;
+}
+message inquiry_response {
+	bytes data = 1;
+}
+message heartcheck_request {
+	string message = 1;
+}
+message heartcheck_response{
+	string ipaddress = 1;
+	string idle = 2;
+}
+
+message idleask_request {
+	string message=1;
+}
+message idleask_response {
+	string message=1;
+}
+message worker_nodes_info_request {
+	map<string, string> worker_nodes_info = 1;
+}
+message worker_nodes_info_response {
+	string result=1;
+}
+message frame_trans_request {
+	string image = 1;
+}
+message frame_trans_response {
+	string result = 1;
+}
+message mask_trans_request {
+	string mask = 1;
+}
+message mask_trans_response {
+	string result = 1;
+}
+message XYWH {
+	int32 x = 1;
+	int32 y = 2;
+	int32 w = 3;
+	int32 h = 4;
+}
+message contours_trans_request {
+	repeated XYWH xywh = 1;
+}
+message contours_trans_response {
+	string result = 1;
+}
